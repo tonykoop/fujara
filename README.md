@@ -2,7 +2,7 @@
 
 > *Parametric design documentation for stave-built fujaras — the deep, harmonics-driven Slovak shepherd's flute, traditionally 5–8 feet tall and tuned to play melodies from the natural overtone series rather than from finger holes.*
 
-![Hero photo](images/00-hero-fujara.jpg)
+![Hero photo](images/00-hero-fujara.png)
 *(placeholder)*
 
 ## What this is

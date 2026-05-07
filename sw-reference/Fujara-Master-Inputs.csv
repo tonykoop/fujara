@@ -1,0 +1,43 @@
+tier,global,value_mm,value_in,units_canonical,units_readout,description,used_in_parts
+1,g_body_OD,47.625,1.875,mm,in,body outer profile diameter,"G2FujaraTop, FujaraBottomG2"
+1,g_body_ID,31.750,1.250,mm,in,body bore diameter (= 2 x bore radius),"G2FujaraTop, FujaraBottomG2, G2FujaraFlue"
+1,g_body_L_finished,1755.775,69.125,mm,in,finished body length (foot to mouthpiece end),"G2FujaraTop, FujaraBottomG2, G2Fujara_Assembly"
+1,g_body_L_blank,1803.400,71.000,mm,in,pre-cut blank length (oversized for trim),"G2FujaraTop, FujaraBottomG2"
+1,g_body_blank_W,57.150,2.250,mm,in,blank board width (split-blank construction),"G2FujaraTop, FujaraBottomG2"
+1,g_mp_block_OD,28.575,1.125,mm,in,mouthpiece block outer profile diameter,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+1,g_mp_block_ID,15.875,0.625,mm,in,mouthpiece block bore (cork seat),"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom, Cork"
+1,g_mp_block_L_blank,735.584,28.960,mm,in,mouthpiece block blank length,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+1,g_mp_block_blank_W,38.100,1.500,mm,in,mouthpiece block blank width,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+1,g_mp_tube_OD,15.875,0.625,mm,in,blow-tube outer diameter,"mouthpiece, FujaraBottomG2, toptube, bottomtube"
+1,g_mp_tube_ID,9.525,0.375,mm,in,blow-tube inner diameter,"mouthpiece, toptube, bottomtube"
+1,g_dowel_OD,6.350,0.250,mm,in,alignment-dowel diameter (1/4 in stock),"G2FujaraTop, FujaraBottomG2"
+1,g_thru_passage_OD,12.700,0.500,mm,in,breath-passage tube OD,"G2FujaraFlue, FujaraBottomG2, G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom, G2FujaraFluePlug"
+1,g_mp_origin_z,22.225,0.875,mm,in,mouthpiece block origin offset from foot (axial),"MasterLayout, G2Fujara_MouthpieceTop"
+1,g_fipple_to_hole1,1157.224,45.560,mm,in,finger-hole 1 distance from fipple,G2FujaraTop
+1,g_fipple_to_hole2,1242.314,48.910,mm,in,finger-hole 2 distance from fipple,G2FujaraTop
+1,g_fipple_to_hole3,1412.494,55.610,mm,in,finger-hole 3 distance from fipple,G2FujaraTop
+1,g_hole_dia,7.620,0.300,mm,in,finger-hole diameter (uniform across all three holes),G2FujaraTop
+2,c_glue_gap,0.0762,0.003,mm,in,wood-on-wood permanent glued joints,"G2FujaraTop, FujaraBottomG2, G2FujaraFlue, G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+2,c_wax_seal_fit,0.0762,0.003,mm,in,removable parts sealed with beeswax (flue plug),G2FujaraFluePlug
+2,c_slip_fit,0.381,0.015,mm,in,non-sealed slip fit (ornament tubes),"FujaraBottomG2, G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+2,c_dowel_clearance,0.000,0.000,mm,in,dowel-pin hole = pin OD (snug glued),"G2FujaraTop, FujaraBottomG2"
+2,c_cork_press,0.1524,0.006,mm,in,cork plug oversize vs bore (interference seal),Cork
+3,board_thickness,28.575,1.125,mm,in,= g_body_blank_W / 2,"G2FujaraTop, FujaraBottomG2"
+3,bore_inner_radius,15.875,0.625,mm,in,= g_body_ID / 2,"G2FujaraTop, FujaraBottomG2"
+3,flue_block_diameter,31.674,1.247,mm,in,= g_body_ID - c_glue_gap,G2FujaraFlue
+3,flue_plug_width,12.624,0.497,mm,in,= g_thru_passage_OD - c_wax_seal_fit,G2FujaraFluePlug
+3,mouthpiece_through_hole,12.776,0.503,mm,in,= g_thru_passage_OD + c_glue_gap,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom, FujaraBottomG2"
+3,mp_inner_diameter,15.951,0.628,mm,in,= g_mp_block_ID + c_glue_gap,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+3,mp_counterbore_diameter,16.256,0.640,mm,in,= g_mp_tube_OD + c_slip_fit,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+3,mp_tube_mount_diameter,16.256,0.640,mm,in,= g_mp_tube_OD + c_slip_fit,FujaraBottomG2
+3,dowel_pin_diameter,6.350,0.250,mm,in,= g_dowel_OD + c_dowel_clearance,"G2FujaraTop, FujaraBottomG2"
+3,cork_mid_diameter,16.027,0.631,mm,in,= g_mp_block_ID + c_cork_press,Cork
+3,mp_block_thickness,19.050,0.750,mm,in,= g_mp_block_blank_W / 2,"G2Fujara_MouthpieceTop, G2Fujara_MouthpieceBottom"
+literal,fipple_height,0.254,0.010,mm,in,VOICING LITERAL - air-jet thickness above labium,G2FujaraTop
+literal,flue_height_slot,1.016,0.040,mm,in,VOICING LITERAL - flue plug slot height,G2FujaraFluePlug
+literal,fipple_gap,10.160,0.400,mm,in,VOICING LITERAL - fipple gap,G2FujaraTop
+literal,fipple_ramp,349.066,13.743,mm,in,VOICING LITERAL - fipple ramp length (Sketch5),G2FujaraTop
+literal,flue_dam,392.699,15.461,mm,in,VOICING LITERAL - flue dam length,G2FujaraTop
+literal,flue_depth_sketch5,12.129,0.478,mm,in,VOICING LITERAL - flue depth (Sketch5),G2FujaraTop
+literal,flue_depth_sketch8,0.838,0.033,mm,in,VOICING LITERAL - flue depth (Sketch8),G2FujaraTop
+literal,fipple_ramp_in,87.267,3.436,mm,in,VOICING LITERAL - fipple ramp inside (Sketch9),G2FujaraTop

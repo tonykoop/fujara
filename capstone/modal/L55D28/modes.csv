@@ -1,0 +1,11 @@
+mode_index,frequency_hz,source
+1,74.3098,analytic_euler_bernoulli
+2,204.8377,analytic_euler_bernoulli
+3,401.5639,analytic_euler_bernoulli
+4,663.8055,analytic_euler_bernoulli
+5,991.6109,analytic_euler_bernoulli
+1,74.3098,scipy_hermite_fem
+2,204.8378,scipy_hermite_fem
+3,401.5640,scipy_hermite_fem
+4,663.8059,scipy_hermite_fem
+5,991.6124,scipy_hermite_fem

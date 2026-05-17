@@ -1,0 +1,5 @@
+station_id,station_name,station_desc,metric,unit,target_or_acceptance,method,status,next_action
+BS-001,bore-foot-to-joint,Main bore station near open end,Cross-section diameter,mm,Record measured ID at station 0.25*total_length,Use telescoping calipers and depth gauge,planned,Capture first station log row in this issue lane
+BS-002,bore-side-branch-junction,Where air branch opens into main bore,Lateral offset and branch centerline distance,mm,Measure branch-to-bore axis offset before any CAD claim,Use calipers and fixture,planned,Capture side-branch geometry rows
+BS-003,bore-labium-plane,Labium interaction plane,Bore ID and labium edge distance,mm,Measure labium-to-bore spacing with calipers and angle tool,Use template and profile photo scale,planned,Record side-branch/labium coupling geometry
+BS-004,bore-foot-end,Open end correction proxy,Wall thickness and ID,mm,Check end correction variables against existing design table,Review design-table values and label as reviewed,planned,Attach evidence source row before moving to L3

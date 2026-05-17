@@ -1,0 +1,7 @@
+artifact_id,path,artifact_kind,role,authority,derived_from,dimension_claim,notes
+DST-001,design-table/fujara-dimensions-parametric.xlsx,design_table,reference_data,reference_only,fujara-design-table.xlsx,review_only,Historical dimension table used for initial hypothesis only
+DST-002,fujara-design-table.xlsx,design_table,reference_data,reference_only,design-table/fujara-dimensions-parametric.xlsx,review_only,Workbook reference values are design-stage only
+DSK-001,build/packet/family-spec.csv,family_spec,packet_authority,analysis_only,core design tables,not_authoritative_until_measured,Rows are scaffold hypotheses tied to unresolved bore/side-branch assumptions
+DSK-002,build/packet/bore-station-plan.csv,measurement_plan,packet_plan,analysis_only,family-spec.csv,not_authoritative_until_measured,Measurement plan; no captured dimensions yet
+DSK-003,build/packet/validation-loop.csv,validation_loop,packet_process,analysis_only,measurement plan and family spec,not_authoritative_until_measured,Plan drives capture order and gate escalation
+DSK-004,build/packet/validation.csv,validation_matrix,packet_process,analysis_only,validation-loop.csv,not_authoritative_until_measured,Gates and blockers are explicit but not yet satisfied

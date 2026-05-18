@@ -15,6 +15,8 @@ This repository combines:
 2. **CAD geometry** for the body, the side-blown mouthpiece chamber, the labium/voicing geometry at the top of the main bore, and the cutting jigs.
 3. **Acoustic analysis** comparing the fujara's harmonic-series voicing to my [Native American flute](https://github.com/tonykoop/flutes) calculations — the design table includes a "NAF CALC K2" cross-reference column.
 
+For a browsable studio map of the current design tables, CAD sources, capstone analysis, validation caveats, and open release blockers, open [`explorer.html`](explorer.html).
+
 Sister project to [`flutes`](https://github.com/tonykoop/flutes), [`djembe`](https://github.com/tonykoop/djembe), [`dundun`](https://github.com/tonykoop/dundun), [`didgeridoo`](https://github.com/tonykoop/didgeridoo), and [`ashiko-drum-workshop`](https://github.com/tonykoop/ashiko-drum-workshop).
 
 ## Cultural attribution

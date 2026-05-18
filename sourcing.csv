@@ -1,0 +1,7 @@
+source_id,item_id,source_type,source_or_search,verification_status,next_action,notes
+SRC-001,BOM-001,local_lumber,straight-grain hardwood blank supplier,unverified,Check current stock and moisture content before build,Long straight clear stock is a major build constraint
+SRC-002,BOM-002,shop_made_or_supplier,side tube stock sized from CAD,unverified,Verify diameter and wall thickness against measured design table row,Do not substitute until flue alignment is reviewed
+SRC-003,BOM-003,shop_made,flue plug/block from matching hardwood,measurement_required,Prototype and measure jet behavior before finalizing,Response-critical component
+SRC-004,BOM-004,supplier,cork sheet or stopper stock,needs_current_check,Confirm thickness and compression behavior,Seal leakage changes response
+SRC-005,BOM-005,cad_reference,7815K833 SolidWorks part reference,needs_current_check,Verify current vendor dimensions if used,Historical CAD reference is not a live purchasing claim
+SRC-006,BOM-006,finish_supplier,breath-contact-safe finish,needs_current_check,Review cure time and food/breath-contact suitability,Safety gate before public build packet

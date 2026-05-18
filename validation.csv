@@ -1,0 +1,9 @@
+gate_id,area,gate,required_evidence,status,next_action
+VAL-001,acoustics,acoustic_law_validator,family-spec.csv passes validate_acoustic_law.py,pass,Rerun after any target note or length change
+VAL-002,acoustics,bore_station_capture,Measured bore ID and wall thickness at foot mid branch and labium stations,measurement_required,Capture caliper/ruler rows with tool/date
+VAL-003,acoustics,flue_labium_response,Measured flue width sound-hole length labium edge distance and response notes,measurement_required,Prototype/measure before releasing cut geometry
+VAL-004,acoustics,side_tube_delivery,Leak test pressure/response and junction angle logged,measurement_required,Measure side air tube as delivery branch not pitched resonator
+VAL-005,tuning,fundamental_and_partials,Tuner captures for fundamental and overblown partials at known temperature/humidity,measurement_required,Record room and warm-playing comparison
+VAL-006,visual_authority,visual_register,visual-output-register.csv passes validate_visual_authority.py,pass,Rerun after adding images drawings CAD or PDF outputs
+VAL-007,cad,cad_review,Native SolidWorks/OpenSCAD/DXF reviewed against selected design-table row,review_required,Export shop-reviewed CAD/DXF before machining
+VAL-008,sourcing,current_purchase_check,BOM and sourcing rows verified at purchase time,blocked,Check supplier specs when a build is scheduled

@@ -1,0 +1,7 @@
+item_id,component,material_or_spec,quantity,status,source_status,notes
+BOM-001,Main bore body,stave-built hardwood blank sized from design table,1,candidate,supplier_unverified,Species and blank size must be checked before purchase
+BOM-002,Side air tube,hardwood or compatible tube matched to flue assembly,1,candidate,supplier_unverified,Delivery tube geometry requires measurement and leak testing
+BOM-003,Flue plug/block,hardwood plug fitted to side-tube outlet,1,candidate,measurement_required,Jet height and width are response-critical
+BOM-004,Cork seals,natural or synthetic cork as shown in SolidWorks sources,TBD,candidate,supplier_unverified,Seal thickness must be verified against CAD and actual tube fit
+BOM-005,Bronze sleeve bearing,McMaster-style sleeve reference from CAD,1,reference,supplier_unverified,Committed SolidWorks part is reference evidence only until current sourcing is checked
+BOM-006,Finish,breath-contact-safe cured finish,TBD,required,needs_current_check,Select only after material and cleaning plan are reviewed

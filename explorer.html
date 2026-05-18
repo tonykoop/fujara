@@ -384,7 +384,7 @@ mark.hit{background:var(--gold);color:var(--ink);
   </div>
   <div class="status-row">
     <div class="status-label">Status</div>
-    <div class="status-val"><span class="pill pill-private">Private review</span>&nbsp;&nbsp;<span class="pill pill-block">Public-release blocked</span> Packet version <span class="strong">explorer-r2-legacy-scan</span></div>
+    <div class="status-val"><span class="pill pill-private">V5 candidate</span>&nbsp;&nbsp;<span class="pill pill-block">Build-ready blocked</span> Packet version <span class="strong">round30-v5-candidate</span></div>
   </div>
   <div class="status-row">
     <div class="status-label">Family</div>
@@ -392,7 +392,7 @@ mark.hit{background:var(--gold);color:var(--ink);
   </div>
   <div class="status-row">
     <div class="status-label">Release gates</div>
-    <div class="status-val"><ul class="gates"><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">No physical prototype measurements are present; empirical validation remains deferred.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">No print-packet.pdf, capstone-deck.pptx, or public site output is committed yet.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">SolidWorks source CAD exists, but no browser-renderable GLB/glTF export is committed for model-viewer.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">Open side branches add V5 packet and Wolfram starter evidence; this root explorer stays on current main until those PRs merge.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">Cultural attribution should be reviewed before public promotion.</span></li></ul></div>
+    <div class="status-val"><ul class="gates"><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">No physical prototype measurements are present; empirical validation remains deferred.</span></li><li class="gate"><span class="gate-dot ok" title="Present"></span><span class="gate-label">V5 candidate files, OpenSCAD starter, vector review plates, print packet, and authority registers are committed.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">SolidWorks source CAD exists, but no browser-renderable GLB/glTF export is committed for model-viewer.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">Flue/labium and side air-tube delivery measurements are required before any shop release.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">Cultural attribution should be reviewed before public promotion.</span></li></ul></div>
   </div>
 </article>
 
@@ -436,8 +436,8 @@ mark.hit{background:var(--gold);color:var(--ink);
     <div class="card"><div class="k">CAD authority</div><div class="v">SolidWorks sources<span class="sub">Body, side-tube, labium/nest, flue plug, and extracted dimensions are present; web GLB/glTF export is still pending.</span></div><p style="margin-top:8px"><a href="sw-reference/README.md">SW reference</a> · <a href="CAD/fujara-body/G2Fujara_Assembly.SLDASM_dimensions.csv">Dimension CSV</a></p></div>
     <div class="card"><div class="k">Analysis authority</div><div class="v">Capstone scaffold<span class="sub">A2 aspect-ratio sweep, structural modes, acoustic cavity modes, coupled-vs-uncoupled comparison, and reproducibility hashes.</span></div><p style="margin-top:8px"><a href="capstone/capstone-deck.md">Capstone deck MD</a> · <a href="capstone/REPRODUCIBILITY.md">Reproduce</a></p></div>
     <div class="card"><div class="k">Manufacturing study</div><div class="v">Flue integration<span class="sub">Main-branch study comparing the separate flue block against an integrated flue-body variant.</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/README.md">Open study</a></p></div>
-    <div class="card"><div class="k">Open side branches</div><div class="v">Packet + Wolfram evidence<span class="sub">Draft PR #6 carries a V5 starter packet; PR #7 carries the side-branch Wolfram starter and exact runtime-blocker evidence.</span></div><p style="margin-top:8px"><a href="https://github.com/tonykoop/fujara/pull/6">PR #6</a> · <a href="https://github.com/tonykoop/fujara/pull/7">PR #7</a></p></div>
-    <div class="card"><div class="k">Missing release assets</div><div class="v">Public packet blockers<span class="sub">No print-packet.pdf, generated static site, browser CAD export, or measured prototype validation is committed on main.</span></div></div>
+    <div class="card"><div class="k">V5 packet</div><div class="v">Candidate artifacts committed<span class="sub">Root packet files, acoustic-law family spec, visual-output register, OpenSCAD starter, vector plates, MCP log, and assembly PDF are present.</span></div><p style="margin-top:8px"><a href="family-spec.csv">Family spec</a> · <a href="visual-output-register.csv">Visual register</a> · <a href="print-packet/assembly-plate.pdf">PDF</a></p></div>
+    <div class="card"><div class="k">Remaining blockers</div><div class="v">Measurements before release<span class="sub">No measured bore/flue/labium/side-tube response or prototype tuning validation is committed yet; GLB/glTF browser CAD export is still pending.</span></div></div>
   </div>
 </section>
 

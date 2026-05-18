@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fujara Studio Explorer</title>
+
+<!-- model-viewer web component (CDN). DRACO decoder is auto-loaded from
+     gstatic.com on first decode of a compressed .glb. -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+<style>
+/* ============================================================
+   Heifer Zephyr — design tokens
+   ============================================================ */
+:root{
+  --walnut:#3D2817; --cedar:#B98B47; --cream:#F8F4E9; --paper:#FFFFFF;
+  --lapis:#1E3A8A; --gold:#D4A017; --ink:#1F1A14; --muted:#6B5E4D;
+  --rule:#E0D6C5; --ok:#2E7D32; --warn:#C89220; --block:#A03A2A;
+  --pill-bg:#FCEFC6; --pill-border:#D4A017;
+  --code-bg:#F2EBDA; --hover:#EFE7D3;
+  --sb-w:260px; --bar-h:56px;
+  --serif:"Fraunces","Source Serif Pro","Iowan Old Style",Georgia,serif;
+  --ui:"Inter","Source Sans Pro","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",Menlo,Consolas,monospace;
+  --italic-serif:"Cormorant Garamond","EB Garamond",Georgia,serif;
+}
+
+/* ============================================================
+   Reset + base
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);
+  font-family:var(--ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--lapis);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:0.88em;background:var(--code-bg);
+  padding:1px 5px;border-radius:3px}
+pre{font-family:var(--mono);font-size:12px;background:var(--code-bg);
+  padding:12px 14px;border-radius:4px;overflow:auto;line-height:1.45;
+  border-left:3px solid var(--cedar)}
+
+/* ============================================================
+   App bar (sticky top)
+   ============================================================ */
+.app-bar{position:sticky;top:0;z-index:30;height:var(--bar-h);
+  background:var(--walnut);color:var(--cream);
+  border-bottom:3px solid var(--gold);
+  display:flex;align-items:center;gap:24px;padding:0 20px}
+.brand{display:flex;align-items:baseline;gap:14px;flex:0 0 auto}
+.wordmark em{font-family:var(--italic-serif);font-style:italic;
+  font-size:22px;color:var(--gold);letter-spacing:0.01em}
+.instrument{font-family:var(--serif);font-size:15px;color:var(--cream);
+  border-left:1px solid rgba(248,244,233,0.3);padding-left:14px}
+.actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.search{background:rgba(248,244,233,0.12);color:var(--cream);
+  border:1px solid rgba(248,244,233,0.25);border-radius:4px;
+  padding:7px 12px;font-family:var(--ui);font-size:13px;width:320px}
+.search::placeholder{color:rgba(248,244,233,0.55)}
+.search:focus{outline:none;border-color:var(--gold);background:rgba(248,244,233,0.18)}
+.action-btn{display:inline-block;font-family:var(--ui);font-size:12px;
+  letter-spacing:0.04em;text-transform:uppercase;
+  color:var(--cream);border:1px solid rgba(248,244,233,0.35);
+  border-radius:3px;padding:6px 10px}
+.action-btn:hover{background:rgba(248,244,233,0.12);text-decoration:none;color:var(--gold)}
+
+/* ============================================================
+   App layout (sidebar + main)
+   ============================================================ */
+.app{display:grid;grid-template-columns:var(--sb-w) 1fr;
+  min-height:calc(100vh - var(--bar-h))}
+.sidebar{background:var(--paper);border-right:1px solid var(--rule);
+  position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));
+  overflow-y:auto;padding:18px 0}
+.sidebar .label{font-family:var(--ui);font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.1em;padding:8px 22px 4px;
+  margin-top:8px}
+.sidebar .label:first-of-type{margin-top:0}
+.toc{list-style:none;margin:0;padding:0}
+.toc li{margin:0}
+.toc-label{font-family:var(--ui);font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.1em;padding:8px 22px 4px;
+  margin-top:8px}
+.toc-label:first-child{margin-top:0}
+.toc a{display:block;padding:6px 22px 6px 26px;color:var(--ink);
+  font-size:13px;line-height:1.35;border-left:3px solid transparent}
+.toc a:hover{background:var(--hover);text-decoration:none;color:var(--walnut)}
+.toc a.active{border-left-color:var(--lapis);color:var(--walnut);
+  background:linear-gradient(90deg,rgba(30,58,138,0.06),transparent 80%);
+  font-weight:600}
+.toc a .num{display:inline-block;width:20px;color:var(--muted);
+  font-family:var(--mono);font-size:11px}
+.toc a.active .num{color:var(--lapis)}
+
+/* ============================================================
+   Main content
+   ============================================================ */
+.main{padding:24px 36px 80px;max-width:1100px;width:100%}
+section{padding-top:8px;scroll-margin-top:calc(var(--bar-h) + 12px)}
+section + section{margin-top:14px;padding-top:24px;
+  border-top:1px solid var(--rule)}
+section h1{font-family:var(--serif);font-weight:600;font-size:30px;
+  color:var(--walnut);margin:0 0 4px;letter-spacing:-0.005em}
+section h1 .eyebrow{display:block;font-family:var(--ui);font-weight:500;
+  font-size:11px;color:var(--lapis);text-transform:uppercase;
+  letter-spacing:0.16em;margin-bottom:6px}
+section h2{font-family:var(--serif);font-weight:600;font-size:19px;
+  color:var(--walnut);margin:22px 0 8px}
+section h3{font-family:var(--ui);font-weight:600;font-size:13px;
+  color:var(--lapis);text-transform:uppercase;letter-spacing:0.08em;
+  margin:18px 0 6px}
+section p{margin:0.6em 0}
+
+.hero-media{margin:12px 0 16px;border:1px solid var(--rule);
+  background:var(--paper);border-radius:5px;overflow:hidden}
+.hero-media img{display:block;width:100%;max-height:430px;object-fit:cover}
+
+/* ============================================================
+   Status card
+   ============================================================ */
+.status-card{background:var(--paper);border:1px solid var(--rule);
+  border-top:4px solid var(--lapis);border-radius:6px;
+  padding:18px 22px;margin:6px 0 28px;
+  box-shadow:0 1px 2px rgba(31,26,20,0.04)}
+.status-row{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.status-row + .status-row{margin-top:10px;padding-top:10px;
+  border-top:1px dashed var(--rule)}
+.status-label{font-family:var(--ui);font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.1em;
+  flex:0 0 110px;padding-top:3px}
+.status-val{flex:1;font-size:14px}
+.status-val .strong{font-weight:600;color:var(--walnut)}
+.pill{display:inline-block;padding:3px 10px;border-radius:11px;
+  font-family:var(--ui);font-size:11px;font-weight:600;
+  letter-spacing:0.04em;text-transform:uppercase}
+.pill-private{background:var(--pill-bg);color:var(--walnut);border:1px solid var(--pill-border)}
+.pill-public{background:#D8EBD3;color:var(--ok);border:1px solid var(--ok)}
+.pill-gate{background:#FAEFE0;color:var(--warn);border:1px solid var(--warn)}
+.pill-fam{background:#E6EAF5;color:var(--lapis);border:1px solid var(--lapis);margin-right:6px}
+.pill-block{background:#F5DBD2;color:var(--block);border:1px solid var(--block)}
+
+.gates{list-style:none;margin:0;padding:0;display:flex;
+  flex-direction:column;gap:8px}
+.gate{display:flex;align-items:flex-start;gap:10px}
+.gate-dot{flex:0 0 12px;width:12px;height:12px;border-radius:50%;
+  margin-top:5px;background:var(--warn);
+  box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--warn)}
+.gate-dot.ok{background:var(--ok);box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ok)}
+.gate-dot.block{background:var(--block);box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--block)}
+.gate-label{flex:1;font-size:13px;color:var(--ink)}
+.gate-label code{font-size:11px;color:var(--muted);background:transparent;
+  border:1px solid var(--rule);padding:1px 4px}
+
+/* ============================================================
+   File viewer (collapsible)
+   ============================================================ */
+.file{margin:14px 0;background:var(--paper);border:1px solid var(--rule);
+  border-radius:5px;overflow:hidden}
+.file-head{display:flex;align-items:center;gap:10px;
+  padding:9px 14px;background:#FAF6EC;cursor:pointer;
+  border-bottom:1px solid var(--rule);font-size:13px;
+  user-select:none;transition:background 80ms}
+.file-head:hover{background:#F3ECD7}
+.file-head .icon{flex:0 0 18px;width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:11px;transition:transform 120ms}
+.file.open .file-head .icon{transform:rotate(90deg)}
+.file-name{font-family:var(--mono);font-size:12.5px;color:var(--walnut);
+  font-weight:500}
+.file-type{display:inline-block;font-family:var(--ui);font-size:10px;
+  letter-spacing:0.08em;text-transform:uppercase;
+  background:var(--cream);color:var(--muted);padding:2px 6px;
+  border-radius:2px;margin-left:6px}
+.file-desc{flex:1;color:var(--muted);font-size:12px;text-align:right;
+  padding-left:12px}
+.file-body{display:none;padding:14px 16px;background:var(--paper);
+  font-size:13.5px}
+.file.open .file-body{display:block}
+.file-actions{display:flex;gap:8px;align-items:center;margin-left:6px}
+.file-actions a{font-size:11px;color:var(--muted);
+  border:1px solid var(--rule);padding:2px 6px;border-radius:2px;
+  letter-spacing:0.04em;text-transform:uppercase}
+.file-actions a:hover{color:var(--lapis);border-color:var(--lapis);text-decoration:none}
+
+/* ============================================================
+   Tables
+   ============================================================ */
+table.data{width:100%;border-collapse:collapse;font-size:12px;
+  font-family:var(--mono);background:var(--paper)}
+table.data th,table.data td{padding:5px 8px;text-align:left;
+  border-bottom:1px solid var(--rule);vertical-align:top;
+  white-space:nowrap;max-width:280px;overflow:hidden;
+  text-overflow:ellipsis}
+table.data th{background:var(--walnut);color:var(--cream);
+  font-family:var(--ui);font-size:11px;font-weight:600;
+  letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;
+  user-select:none;position:sticky;top:0;z-index:1}
+table.data th:hover{background:#52341E}
+table.data tr:nth-child(even) td{background:#FBF7EC}
+table.data tr:hover td{background:#F3ECD7}
+table.data tr.warn td{background:#FBEED2}
+table.data tr.warn:hover td{background:#F5E2B7}
+.table-wrap{overflow:auto;max-height:540px;border:1px solid var(--rule);
+  border-radius:4px}
+.table-stats{font-size:11px;color:var(--muted);padding:4px 0 8px;
+  font-family:var(--ui)}
+
+/* ============================================================
+   Cards
+   ============================================================ */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;margin:14px 0}
+.card{background:var(--paper);border:1px solid var(--rule);
+  border-radius:4px;padding:14px 16px;font-size:13px}
+.card .k{font-family:var(--ui);font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.card .v{font-family:var(--serif);font-size:16px;color:var(--walnut);font-weight:600;line-height:1.3}
+.card .v .sub{display:block;font-family:var(--ui);font-size:12px;
+  color:var(--muted);font-weight:400;margin-top:3px}
+
+/* ============================================================
+   Callouts (scope boundary, cultural notes)
+   ============================================================ */
+.callout{border-left:4px solid var(--cedar);background:#FAF6EC;
+  padding:14px 18px;margin:14px 0;font-size:13.5px;border-radius:0 4px 4px 0}
+.callout.warn{border-color:var(--warn);background:#FCEFC6}
+.callout.block{border-color:var(--block);background:#F8E3DC}
+.callout .lab{font-family:var(--ui);font-size:10.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.08em;color:var(--walnut);
+  margin-bottom:6px;display:block}
+.callout.warn .lab{color:var(--warn)}
+.callout.block .lab{color:var(--block)}
+.callout p:first-of-type{margin-top:0}
+.callout p:last-of-type{margin-bottom:0}
+
+/* ============================================================
+   CAD viewer (model-viewer slot + poster fallback)
+   ============================================================ */
+.cad-wrap{margin:14px 0;background:var(--paper);
+  border:1px solid var(--rule);border-radius:5px;overflow:hidden}
+.cad-head{display:flex;align-items:center;gap:10px;padding:9px 14px;
+  background:#FAF6EC;border-bottom:1px solid var(--rule);font-size:12.5px}
+.cad-head .dot{width:10px;height:10px;border-radius:50%;
+  background:var(--muted);box-shadow:0 0 0 2px var(--paper)}
+.cad-head.live .dot{background:var(--ok)}
+.cad-head .label{font-family:var(--ui);text-transform:uppercase;
+  letter-spacing:0.08em;font-size:10.5px;font-weight:700;color:var(--walnut)}
+.cad-head .note{color:var(--muted);font-size:12px}
+.cad-stage{position:relative;background:#FFFCF3;min-height:480px;
+  display:flex;align-items:center;justify-content:center}
+model-viewer{width:100%;height:560px;display:block;background:#FFFCF3;
+  --poster-color:transparent}
+.cad-fallback{padding:24px;text-align:center;width:100%}
+.cad-fallback img,.cad-fallback svg{max-width:100%;max-height:520px;
+  display:block;margin:0 auto 14px}
+.cad-fallback .msg{font-family:var(--ui);font-size:13px;color:var(--muted);
+  max-width:520px;margin:0 auto}
+.cad-fallback .msg .strong{color:var(--walnut);font-weight:600}
+.cad-poster{margin:14px 0;background:var(--paper);border:1px solid var(--rule);
+  border-radius:5px;overflow:hidden}
+.cad-poster img{display:block;width:100%;max-height:420px;object-fit:contain;
+  background:#FFFCF3}
+
+/* ============================================================
+   Markdown rendered content
+   ============================================================ */
+.md{font-size:14px;line-height:1.6}
+.md h1,.md h2,.md h3,.md h4{font-family:var(--serif);color:var(--walnut);
+  margin-top:1.2em;margin-bottom:0.4em;line-height:1.3}
+.md h1{font-size:20px} .md h2{font-size:17px;border-bottom:1px solid var(--rule);padding-bottom:3px}
+.md h3{font-size:14px;font-family:var(--ui);text-transform:uppercase;
+  letter-spacing:0.06em;color:var(--lapis)}
+.md h4{font-size:13px}
+.md p{margin:0.65em 0}
+.md ul,.md ol{padding-left:22px;margin:0.5em 0}
+.md li{margin:3px 0}
+.md blockquote{border-left:3px solid var(--cedar);padding-left:14px;
+  color:var(--muted);font-style:italic;margin:0.8em 0}
+.md table{width:100%;border-collapse:collapse;margin:0.8em 0;font-size:12.5px}
+.md table th,.md table td{padding:5px 8px;border:1px solid var(--rule);
+  text-align:left;vertical-align:top}
+.md table th{background:var(--walnut);color:var(--cream);
+  font-family:var(--ui);font-size:11px;letter-spacing:0.04em}
+.md table tr:nth-child(even) td{background:#FBF7EC}
+.md code{font-size:0.88em}
+.md hr{border:none;border-top:1px solid var(--gold);margin:1em 0}
+
+/* ============================================================
+   Tag rows + checklists
+   ============================================================ */
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tag{display:inline-block;font-family:var(--ui);font-size:11px;
+  background:var(--cream);color:var(--walnut);padding:3px 9px;
+  border-radius:3px;border:1px solid var(--rule);letter-spacing:0.02em}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--ui);font-size:11px;color:var(--lapis);
+  text-transform:uppercase;letter-spacing:0.16em;margin-bottom:4px}
+.placeholder{background:#FAF6EC;border:1px dashed var(--cedar);
+  border-radius:4px;padding:14px 18px;color:var(--muted);
+  font-size:13.5px;font-style:italic}
+.placeholder .strong{color:var(--walnut);font-style:normal;font-weight:600}
+
+/* ============================================================
+   Wolfram Cloud embed block
+   ============================================================ */
+.wolfram-embed-wrap{margin:14px 0}
+.wolfram-embed-status{display:flex;align-items:center;gap:10px;
+  padding:9px 14px;background:#FAF6EC;border:1px solid var(--rule);
+  border-radius:4px 4px 0 0;font-size:12.5px}
+.wolfram-embed-status.live{background:#E8F1E5;border-color:var(--ok)}
+.wolfram-embed-status.live .dot{background:var(--ok)}
+.wolfram-embed-status.pending{background:#FCEFC6;border-color:var(--pill-border)}
+.wolfram-embed-status.pending .dot{background:var(--warn)}
+.wolfram-embed-status.private{background:#EEEAE0;border-color:var(--muted)}
+.wolfram-embed-status.private .dot{background:var(--muted)}
+.wolfram-embed-status.failed{background:#F8E3DC;border-color:var(--block)}
+.wolfram-embed-status.failed .dot{background:var(--block)}
+.wolfram-embed-status .dot{width:10px;height:10px;border-radius:50%;
+  flex:0 0 10px;box-shadow:0 0 0 2px var(--paper)}
+.wolfram-embed-status .label{font-family:var(--ui);text-transform:uppercase;
+  letter-spacing:0.08em;font-size:10.5px;font-weight:700;color:var(--walnut)}
+.wolfram-embed-iframe{width:100%;height:780px;border:1px solid var(--rule);
+  border-top:none;border-radius:0 0 4px 4px;display:block;background:var(--paper)}
+.wolfram-pending-body{padding:16px 22px;background:var(--paper);
+  border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;
+  color:var(--ink);font-size:13.5px}
+.wolfram-pending-body p{margin:0.5em 0}
+.wolfram-pending-body code{font-size:11.5px}
+
+/* Search highlight */
+mark.hit{background:var(--gold);color:var(--ink);
+  padding:0 2px;border-radius:2px}
+
+/* ============================================================
+   Print + mobile
+   ============================================================ */
+@media print{
+  .app-bar,.sidebar,.actions,.file-head{display:none}
+  .app{grid-template-columns:1fr}
+  .file-body{display:block !important;border:none;padding:0}
+  .main{max-width:none;padding:0}
+  model-viewer{display:none}
+}
+@media (max-width:880px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .actions .search{width:180px}
+  .main{padding:16px}
+  model-viewer{height:380px}
+}
+
+</style>
+</head>
+<body>
+
+<header class="app-bar">
+  <div class="brand">
+    <span class="wordmark"><em>Heifer Zephyr</em></span>
+    <span class="instrument">fujara · Studio Explorer</span>
+  </div>
+  <div class="actions">
+    <input id="search" class="search" placeholder="Search packet content…" aria-label="Search packet content">
+    <a class="action-btn" href="https://github.com/tonykoop/explorer-r2-fujara" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<div class="app">
+
+<nav class="sidebar" aria-label="Sections">
+  <ol class="toc" id="toc"></ol>
+</nav>
+
+<main class="main">
+
+<article class="status-card">
+  <div class="status-row">
+    <div class="status-label">Build target</div>
+    <div class="status-val"><span class="strong">G2 fujara / A2 study baseline</span> · Fujara Studio Explorer</div>
+  </div>
+
+  <div class="status-row">
+    <div class="status-label">Focus</div>
+    <div class="status-val"><span class="strong">Slovak overtone fipple flute with side air tube</span></div>
+  </div>
+  <div class="status-row">
+    <div class="status-label">Status</div>
+    <div class="status-val"><span class="pill pill-private">Private review</span>&nbsp;&nbsp;<span class="pill pill-block">Public-release blocked</span> Packet version <span class="strong">explorer-r2-legacy-scan</span></div>
+  </div>
+  <div class="status-row">
+    <div class="status-label">Family</div>
+    <div class="status-val"><span class="pill pill-fam">overtone flute</span><span class="pill pill-fam">fipple flute</span><span class="pill pill-fam">side-tube fujara</span><span class="pill pill-fam">woodwind</span></div>
+  </div>
+  <div class="status-row">
+    <div class="status-label">Release gates</div>
+    <div class="status-val"><ul class="gates"><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">No physical prototype measurements are present; empirical validation remains deferred.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">No print-packet.pdf, capstone-deck.pptx, or public site output is committed yet.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">SolidWorks source CAD exists, but no browser-renderable GLB/glTF export is committed for model-viewer.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">Open side branches add V5 packet and Wolfram starter evidence; this root explorer stays on current main until those PRs merge.</span></li><li class="gate"><span class="gate-dot block" title="Open"></span><span class="gate-label">Cultural attribution should be reviewed before public promotion.</span></li></ul></div>
+  </div>
+</article>
+
+<section id="overview" data-toc="Overview" data-toc-group="Project">
+  <h1><span class="eyebrow">01 · Overview</span>Fujara Studio Explorer</h1>
+  <figure class="hero-media"><img src="images/00-hero-fujara.png" alt="Fujara Studio Explorer"></figure>
+  <p>The fujara is a Slovak overtone shepherd&#x27;s flute from the Podpolanie region; this repository documents Tony Koop&#x27;s engineering derivation and does not claim cultural ownership of the tradition.</p>
+  <div class="callout"><span class="lab">Scope &amp; provenance</span><p><strong>Pattern:</strong> Parametric stave-built fujara study with SolidWorks source CAD, acoustic/capstone analysis, and deferred physical validation. Public-domain status: Engineering files are CC-BY 4.0; cultural/music practice requires respectful attribution. The fujara is a Slovak overtone shepherd&#x27;s flute from the Podpolanie region; this repository documents Tony Koop&#x27;s engineering derivation and does not claim cultural ownership of the tradition.</p></div>
+  <div class="cards"><div class="card"><div class="k">target fundamental</div><div class="v">A2 / 110 Hz capstone baseline</div></div><div class="card"><div class="k">candidate aspect ratios</div><div class="v">45:1, 50:1, 55:1, 60:1 L:D</div></div><div class="card"><div class="k">baseline bore id</div><div class="v">1.25 in / 31.75 mm from G2 SolidWorks references</div></div><div class="card"><div class="k">hole layout rule</div><div class="v">three fujara holes at 68%, 73%, and 83% of long chamber length</div></div><div class="card"><div class="k">dimension authority</div><div class="v">design-table workbooks, SolidWorks files, SW reference CSVs, and capstone CSV outputs</div></div></div>
+</section>
+
+<section id="repo-assets" data-toc="Repo Artifacts" data-toc-group="Project">
+  <h1><span class="eyebrow">· Repo artifacts</span>Design tables · research · source files</h1>
+<div class="file open"><div class="file-head" onclick="toggleFile(this)"><span class="icon">▶</span><span class="file-name">README.md</span><span class="file-type">MD</span><span class="file-desc">Repository narrative</span><span class="file-actions"><a href="README.md" target="_blank" rel="noopener">Open</a></span></div><div class="file-body" data-md="README.md"></div></div>
+<div class="cards"><div class="card"><div class="k">Workbook</div><div class="v">fujara-design-table.xlsx<span class="sub">fujara-design-table.xlsx</span></div><p style="margin-top:8px"><a href="fujara-design-table.xlsx" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">Workbook</div><div class="v">fujara-dimensions-parametric.xlsx<span class="sub">design-table/fujara-dimensions-parametric.xlsx</span></div><p style="margin-top:8px"><a href="design-table/fujara-dimensions-parametric.xlsx" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">Artifact</div><div class="v">README.md<span class="sub">analysis/flue-integration/README.md</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/README.md" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">Artifact</div><div class="v">acoustic-impact.md<span class="sub">analysis/flue-integration/acoustic-impact.md</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/acoustic-impact.md" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">Artifact</div><div class="v">geometry-comparison.md<span class="sub">analysis/flue-integration/geometry-comparison.md</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/geometry-comparison.md" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">Artifact</div><div class="v">manufacturing-impact.md<span class="sub">analysis/flue-integration/manufacturing-impact.md</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/manufacturing-impact.md" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">Artifact</div><div class="v">recommendation.md<span class="sub">analysis/flue-integration/recommendation.md</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/recommendation.md" target="_blank" rel="noopener">Open</a></p></div></div>
+</section>
+
+<section id="cad" data-toc="CAD Export Queue" data-toc-group="Project">
+  <h1><span class="eyebrow">02 · CAD export queue</span>glTF / GLB pending</h1>
+  <div class="callout warn"><span class="lab">Model-viewer asset needed</span>
+    <p>Source CAD exists, but no browser-renderable <code>.glb</code> or <code>.gltf</code> was found yet. Export the chosen SolidWorks assembly into the repo's CAD folder and rerun this generator; the explorer will then inline small <code>.glb</code> files automatically.</p>
+  </div>
+
+  <div class="cards"><div class="card"><div class="k">CAD source</div><div class="v">7815K833_High-Strength 932 Bronze Flanged Sleeve Bearing.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/7815K833_High-Strength%20932%20Bronze%20Flanged%20Sleeve%20Bearing.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">Cork.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/Cork.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">FujaraBottomG2.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/FujaraBottomG2.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">Fujara_Assembly.SLDASM<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/Fujara_Assembly.SLDASM" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">G2FujaraFlue.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/G2FujaraFlue.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">G2FujaraFluePlug.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/G2FujaraFluePlug.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">G2FujaraTop.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/G2FujaraTop.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">G2Fujara_MouthpieceBottom.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/G2Fujara_MouthpieceBottom.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">G2Fujara_MouthpieceTop.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/G2Fujara_MouthpieceTop.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">bottomtube.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/bottomtube.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">mouthpiece.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/mouthpiece.SLDPRT" target="_blank" rel="noopener">Open</a></p></div><div class="card"><div class="k">CAD source</div><div class="v">toptube.SLDPRT<span class="sub">SolidWorks/source model</span></div><p style="margin-top:8px"><a href="CAD/fujara-body/toptube.SLDPRT" target="_blank" rel="noopener">Open</a></p></div></div>
+  <p class="muted">Showing 12 of 18 CAD source files.</p>
+</section>
+
+<section id="capstone" data-toc="Capstone Deliverables" data-toc-group="Publish">
+  <h1><span class="eyebrow">· Capstone deliverables</span>Deck · print packet · explorer</h1>
+  <div class="cards"><div class="card"><div class="k">Manifest</div><div class="v">capstone-manifest.json<span class="sub">Artifact inventory; release gates; required-before-public list</span></div><p style="margin-top:8px"><a href="capstone-manifest.json">Open JSON</a></p></div><div class="card"><div class="k">Studio explorer</div><div class="v">explorer.html<span class="sub">This document. Generated by instrument-maker/scripts/generate_explorer.py.</span></div><p style="margin-top:8px"><a href="explorer.html">Reload</a></p></div></div>
+</section>
+
+<section id="studio-map" data-toc="Studio Map" data-toc-group="Project">
+  <h1><span class="eyebrow">· Studio map</span>What this explorer can prove today</h1>
+  <div class="callout">
+    <span class="lab">Readiness boundary</span>
+    <p>This page is a root-level studio guide over existing repository evidence. It is not a fabrication release by itself: dimensions remain governed by the design-table workbooks, SolidWorks references, and capstone CSV outputs, while physical tuning and overblow validation still require a built fujara.</p>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="k">Design authority</div><div class="v">Parametric workbooks<span class="sub">Fundamentals from D2 through F#3, A2 capstone baseline, and G2 SolidWorks dimensions.</span></div><p style="margin-top:8px"><a href="design-table/fujara-dimensions-parametric.xlsx">Open workbook</a> · <a href="design-table/fujara_equations.md">Equations</a></p></div>
+    <div class="card"><div class="k">CAD authority</div><div class="v">SolidWorks sources<span class="sub">Body, side-tube, labium/nest, flue plug, and extracted dimensions are present; web GLB/glTF export is still pending.</span></div><p style="margin-top:8px"><a href="sw-reference/README.md">SW reference</a> · <a href="CAD/fujara-body/G2Fujara_Assembly.SLDASM_dimensions.csv">Dimension CSV</a></p></div>
+    <div class="card"><div class="k">Analysis authority</div><div class="v">Capstone scaffold<span class="sub">A2 aspect-ratio sweep, structural modes, acoustic cavity modes, coupled-vs-uncoupled comparison, and reproducibility hashes.</span></div><p style="margin-top:8px"><a href="capstone/capstone-deck.md">Capstone deck MD</a> · <a href="capstone/REPRODUCIBILITY.md">Reproduce</a></p></div>
+    <div class="card"><div class="k">Manufacturing study</div><div class="v">Flue integration<span class="sub">Main-branch study comparing the separate flue block against an integrated flue-body variant.</span></div><p style="margin-top:8px"><a href="analysis/flue-integration/README.md">Open study</a></p></div>
+    <div class="card"><div class="k">Open side branches</div><div class="v">Packet + Wolfram evidence<span class="sub">Draft PR #6 carries a V5 starter packet; PR #7 carries the side-branch Wolfram starter and exact runtime-blocker evidence.</span></div><p style="margin-top:8px"><a href="https://github.com/tonykoop/fujara/pull/6">PR #6</a> · <a href="https://github.com/tonykoop/fujara/pull/7">PR #7</a></p></div>
+    <div class="card"><div class="k">Missing release assets</div><div class="v">Public packet blockers<span class="sub">No print-packet.pdf, generated static site, browser CAD export, or measured prototype validation is committed on main.</span></div></div>
+  </div>
+</section>
+
+<section id="sources" data-toc="Sources &amp; Provenance" data-toc-group="Publish">
+  <h1><span class="eyebrow">· Sources &amp; provenance</span>Bibliography</h1>
+  <ul><li><strong>Repository README</strong> — Tony Koop engineering narrative and cultural attribution (<a href="README.md" target="_blank" rel="noopener">README.md</a>)</li><li><strong>Capstone reproducibility notes</strong> — Local Python FEM and acoustic analysis scaffold (<a href="capstone/REPRODUCIBILITY.md" target="_blank" rel="noopener">capstone/REPRODUCIBILITY.md</a>)</li><li><strong>Flue integration variant study</strong> — Main-branch analysis of separate vs integrated flue construction (<a href="analysis/flue-integration/README.md" target="_blank" rel="noopener">analysis/flue-integration/README.md</a>)</li></ul>
+</section>
+
+</main>
+</div>
+
+
+
+<script>
+(function(){
+// =====================================================
+// 1. Utilities
+// =====================================================
+function escapeHTML(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function inlineMD(s){
+  return s
+    .replace(/`([^`]+)`/g, (m,c)=>'<code>'+c+'</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+}
+
+// =====================================================
+// 2. CSV viewer (data-csv="filename")
+// =====================================================
+function parseCSVRow(line){
+  const out = []; let cur = ''; let q = false;
+  for (let i=0; i<line.length; i++){
+    const c = line[i];
+    if (q){
+      if (c === '"' && line[i+1] === '"'){ cur += '"'; i++; }
+      else if (c === '"'){ q = false; }
+      else cur += c;
+    } else {
+      if (c === ','){ out.push(cur); cur = ''; }
+      else if (c === '"'){ q = true; }
+      else cur += c;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+function renderCSV(target, text){
+  const lines = text.replace(/\r/g,'').split('\n').filter(l => l.length);
+  if (!lines.length){ target.innerHTML = '<p class="muted">Empty</p>'; return; }
+  const head = parseCSVRow(lines.shift());
+  const rows = lines.map(parseCSVRow);
+  const wrap = document.createElement('div'); wrap.className = 'table-wrap';
+  const tbl = document.createElement('table'); tbl.className = 'data';
+  const thead = document.createElement('thead'); const tr = document.createElement('tr');
+  head.forEach(h => { const th = document.createElement('th'); th.textContent = h; tr.appendChild(th); });
+  thead.appendChild(tr); tbl.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  rows.forEach(r => {
+    const trr = document.createElement('tr');
+    r.forEach(c => { const td = document.createElement('td'); td.textContent = c; td.title = c; trr.appendChild(td); });
+    tbody.appendChild(trr);
+  });
+  tbl.appendChild(tbody); wrap.appendChild(tbl); target.appendChild(wrap);
+  const stats = document.createElement('div'); stats.className = 'table-stats';
+  stats.textContent = rows.length + ' rows · ' + head.length + ' columns';
+  target.appendChild(stats);
+}
+
+// =====================================================
+// 3. Tiny markdown renderer (data-md="filename")
+// =====================================================
+function renderMD(src){
+  const lines = src.replace(/\r/g,'').split('\n');
+  const out = []; let i = 0;
+  while (i < lines.length){
+    const line = lines[i];
+    let m;
+    // Heading
+    if ((m = line.match(/^(#{1,4})\s+(.*)$/))){
+      const lvl = m[1].length;
+      out.push('<h'+lvl+'>'+inlineMD(escapeHTML(m[2]))+'</h'+lvl+'>');
+      i++; continue;
+    }
+    // HR
+    if (line.match(/^---+\s*$/)){ out.push('<hr>'); i++; continue; }
+    // Code fence
+    if (line.startsWith('```')){
+      const buf = []; i++;
+      while (i < lines.length && !lines[i].startsWith('```')){
+        buf.push(lines[i]); i++;
+      }
+      i++;
+      out.push('<pre>'+escapeHTML(buf.join('\n'))+'</pre>');
+      continue;
+    }
+    // Table
+    if (line.match(/^\s*\|/) && lines[i+1] && lines[i+1].match(/^\s*\|[\s\-:\|]+\|\s*$/)){
+      const head = line.split('|').slice(1,-1).map(c=>c.trim());
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].match(/^\s*\|/)){
+        rows.push(lines[i].split('|').slice(1,-1).map(c=>c.trim()));
+        i++;
+      }
+      let t = '<table><thead><tr>' + head.map(h=>'<th>'+inlineMD(escapeHTML(h))+'</th>').join('') + '</tr></thead><tbody>';
+      rows.forEach(r => {
+        t += '<tr>' + r.map(c=>'<td>'+inlineMD(escapeHTML(c))+'</td>').join('') + '</tr>';
+      });
+      t += '</tbody></table>';
+      out.push(t); continue;
+    }
+    // Blockquote
+    if (line.startsWith('> ')){
+      const buf = [];
+      while (i < lines.length && lines[i].startsWith('> ')){
+        buf.push(lines[i].replace(/^>\s?/, '')); i++;
+      }
+      out.push('<blockquote>' + renderMD(buf.join('\n')) + '</blockquote>');
+      continue;
+    }
+    // Unordered list
+    if (line.match(/^[-*]\s+/)){
+      const buf = [];
+      while (i < lines.length && lines[i].match(/^[-*]\s+/)){
+        buf.push('<li>' + inlineMD(escapeHTML(lines[i].replace(/^[-*]\s+/, ''))) + '</li>');
+        i++;
+      }
+      out.push('<ul>' + buf.join('') + '</ul>');
+      continue;
+    }
+    // Ordered list
+    if (line.match(/^\d+\.\s+/)){
+      const buf = [];
+      while (i < lines.length && lines[i].match(/^\d+\.\s+/)){
+        buf.push('<li>' + inlineMD(escapeHTML(lines[i].replace(/^\d+\.\s+/, ''))) + '</li>');
+        i++;
+      }
+      out.push('<ol>' + buf.join('') + '</ol>');
+      continue;
+    }
+    if (line.trim() === ''){ i++; continue; }
+    const buf = [line]; i++;
+    while (i < lines.length && lines[i].trim() !== '' &&
+           !lines[i].match(/^(#{1,4}\s|[-*]\s|\d+\.\s|>\s|\||---+|```)/)){
+      buf.push(lines[i]); i++;
+    }
+    out.push('<p>' + inlineMD(escapeHTML(buf.join(' '))) + '</p>');
+  }
+  return out.join('\n');
+}
+
+// =====================================================
+// 4. File viewers (data-csv / data-md) — fetch on demand
+// =====================================================
+async function fetchText(fn){
+  try {
+    const r = await fetch(fn, {cache: 'no-store'});
+    if (!r.ok) return null;
+    return await r.text();
+  } catch(e){ return null; }
+}
+async function initFiles(){
+  const csvs = document.querySelectorAll('[data-csv]');
+  for (const el of csvs){
+    const fn = el.dataset.csv;
+    const text = await fetchText(fn);
+    if (text === null){
+      el.innerHTML = '<p class="muted">Source not loadable in this context (likely local-file CORS). <a href="' + fn + '" target="_blank" rel="noopener">Open raw →</a></p>';
+      continue;
+    }
+    el.innerHTML = ''; renderCSV(el, text);
+  }
+  const mds = document.querySelectorAll('[data-md]');
+  for (const el of mds){
+    const fn = el.dataset.md;
+    const text = await fetchText(fn);
+    if (text === null){
+      el.innerHTML = '<p class="muted">Source not loadable in this context (likely local-file CORS). <a href="' + fn + '" target="_blank" rel="noopener">Open raw →</a></p>';
+      continue;
+    }
+    const wrap = document.createElement('div'); wrap.className = 'md';
+    wrap.innerHTML = renderMD(text);
+    el.innerHTML = ''; el.appendChild(wrap);
+  }
+}
+
+// =====================================================
+// 5. Toggle file viewer open/closed
+// =====================================================
+window.toggleFile = function(headEl){
+  headEl.parentElement.classList.toggle('open');
+};
+
+// =====================================================
+// 6. Build sidebar TOC from sections
+// =====================================================
+function buildTOC(){
+  const sidebar = document.getElementById('toc');
+  let lastGroup = null; let num = 0;
+  document.querySelectorAll('section[data-toc]').forEach(sec => {
+    const group = sec.dataset.tocGroup || '';
+    if (group !== lastGroup){
+      const lbl = document.createElement('li'); lbl.className = 'toc-label';
+      lbl.textContent = group;
+      sidebar.appendChild(lbl);
+      lastGroup = group;
+    }
+    num++;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.innerHTML = '<span class="num">'+String(num).padStart(2,'0')+'</span>' + sec.dataset.toc;
+    li.appendChild(a); sidebar.appendChild(li);
+  });
+}
+
+// =====================================================
+// 7. Active section highlight
+// =====================================================
+function activeTOC(){
+  const links = {};
+  document.querySelectorAll('#toc a').forEach(a => {
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      const a = links[en.target.id]; if (!a) return;
+      if (en.isIntersecting){
+        Object.values(links).forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-60px 0px -55% 0px', threshold: 0 });
+  document.querySelectorAll('section[id]').forEach(sec => obs.observe(sec));
+}
+
+// =====================================================
+// 8. Client-side search across visible text
+// =====================================================
+function setupSearch(){
+  const input = document.getElementById('search');
+  let prevHits = [];
+  function clearHits(){
+    prevHits.forEach(node => {
+      const t = document.createTextNode(node.textContent);
+      node.parentNode.replaceChild(t, node);
+    });
+    prevHits = [];
+  }
+  function highlight(text){
+    if (!text){ clearHits(); return; }
+    clearHits();
+    const main = document.querySelector('.main');
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode(n){
+        if (!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if (n.parentElement.closest('script,style,template,mark')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const re = new RegExp('(' + text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    const todo = []; let n;
+    while ((n = walker.nextNode())){
+      if (n.nodeValue.match(re)) todo.push(n);
+    }
+    let first = null;
+    todo.forEach(node => {
+      const frag = document.createDocumentFragment();
+      const parts = node.nodeValue.split(re);
+      parts.forEach(p => {
+        if (re.test(p)){
+          const m = document.createElement('mark');
+          m.className = 'hit'; m.textContent = p;
+          frag.appendChild(m); prevHits.push(m); if (!first) first = m;
+        } else {
+          frag.appendChild(document.createTextNode(p));
+        }
+        re.lastIndex = 0;
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+    if (first){ first.scrollIntoView({behavior:'smooth', block:'center'}); }
+  }
+  let t;
+  input.addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(() => highlight(input.value.trim()), 220);
+  });
+}
+
+// =====================================================
+// 9. Wolfram Cloud embed (per integration-contract states)
+//    States: Live (Public-Execute URL) | Private (uploaded, owner-only) |
+//    Pending (no URL provided yet)     | Failed (data-permission="failed"
+//                                       or "missing" — diagnostic-only,
+//                                       not shown to public viewers)
+// =====================================================
+function initWolframEmbeds(){
+  document.querySelectorAll('.wolfram-embed-wrap').forEach(el => {
+    const url = (el.dataset.cloudUrl || '').trim();
+    const name = el.dataset.notebookName || 'notebook';
+    const path = el.dataset.cloudPath || '';
+    const permissionRaw = (el.dataset.permission || '').trim();
+    const permission = permissionRaw.toLowerCase();
+    const isLocal = permission === 'local';
+    const isFailed = permission === 'failed' || permission === 'missing';
+    const isPrivate = permission === 'private' || url === 'PRIVATE';
+    const isPending = !isFailed && !isPrivate &&
+                      (!url || url === 'PENDING' ||
+                       url.startsWith('PLACEHOLDER') || !url.startsWith('http'));
+
+    if (isLocal){
+      el.innerHTML =
+        '<div class="wolfram-embed-status pending">' +
+          '<span class="dot"></span>' +
+          '<span class="label">Local notebook</span>' +
+          '<span>Detected locally; publish through <code>wolfram-cloud-sync</code> for an embeddable iframe</span>' +
+        '</div>' +
+        '<div class="wolfram-pending-body">' +
+          '<p><strong>' + escapeHTML(name) + '</strong> exists in this repo but does not yet have a Cloud embed URL.</p>' +
+          (path ? '<p>Local path: <code>' + escapeHTML(path) + '</code></p>' : '') +
+          '<p>Once uploaded with Public-Execute permission, this block becomes a live Wolfram iframe.</p>' +
+        '</div>';
+      return;
+    }
+    if (isFailed){
+      // Diagnostic state — shown to owner so the broken-link case is visible
+      el.innerHTML =
+        '<div class="wolfram-embed-status failed">' +
+          '<span class="dot"></span>' +
+          '<span class="label">Diagnostic — ' + permission + '</span>' +
+          '<span>Cloud sync ran into an error for this notebook. Re-run <code>wolfram-cloud-sync</code> publish.</span>' +
+        '</div>' +
+        '<div class="wolfram-pending-body">' +
+          '<p><strong>' + escapeHTML(name) + '</strong> permission state: <code>' + escapeHTML(permissionRaw) + '</code>.</p>' +
+          (path ? '<p>Cloud path: <code>' + escapeHTML(path) + '</code></p>' : '') +
+          '<p>This block is visible only to the repo owner; the public-facing site will hide it once published.</p>' +
+        '</div>';
+      return;
+    }
+    if (isPrivate){
+      el.innerHTML =
+        '<div class="wolfram-embed-status private">' +
+          '<span class="dot"></span>' +
+          '<span class="label">Owner-only — not yet published</span>' +
+          '<span>Uploaded; interactive embed appears once permission flips to Public-Execute</span>' +
+        '</div>' +
+        '<div class="wolfram-pending-body">' +
+          '<p><strong>' + escapeHTML(name) + '</strong> is uploaded to Wolfram Cloud but not publicly accessible yet.</p>' +
+          (path ? '<p>Cloud path: <code>' + escapeHTML(path) + '</code> (owner can open in Wolfram Cloud).</p>' : '') +
+          '<p>Public-Execute permission is granted on a per-instrument basis as each explorer matures and the release gates pass.</p>' +
+        '</div>';
+      return;
+    }
+    if (isPending){
+      el.innerHTML =
+        '<div class="wolfram-embed-status pending">' +
+          '<span class="dot"></span>' +
+          '<span class="label">Upload pending</span>' +
+          '<span>Awaiting <code>wolfram-cloud-sync</code> upload + public-execute permission</span>' +
+        '</div>' +
+        '<div class="wolfram-pending-body">' +
+          '<p><strong>' + escapeHTML(name) + '</strong> hasn\'t been published to Wolfram Cloud yet.</p>' +
+          (path ? '<p>Target cloud path: <code>' + escapeHTML(path) + '</code></p>' : '') +
+          '<p>Once the notebook is uploaded and set to public-execute, the live interactive embed will appear here.</p>' +
+        '</div>';
+      return;
+    }
+    // Live embed
+    el.innerHTML =
+      '<div class="wolfram-embed-status live">' +
+        '<span class="dot"></span>' +
+        '<span class="label">Live</span>' +
+        '<span>Interactive — runs in Wolfram Cloud</span>' +
+      '</div>' +
+      '<iframe class="wolfram-embed-iframe"' +
+        ' src="' + escapeHTML(url) + '"' +
+        ' title="' + escapeHTML(name) + ' — interactive Wolfram notebook"' +
+        ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"' +
+        ' allow="fullscreen"' +
+        ' loading="lazy"></iframe>';
+  });
+}
+
+// =====================================================
+// 10. CAD viewer — flip header to "live" when model loads
+// =====================================================
+function initCAD(){
+  const mv = document.getElementById('cad-mv');
+  const head = document.getElementById('cad-head');
+  if (!mv || !head) return;
+  mv.addEventListener('load', () => {
+    const label = mv.dataset.modelLabel || 'CAD model';
+    const src = mv.dataset.modelSrc || mv.getAttribute('src') || 'inline embedded GLB';
+    head.classList.add('live');
+    head.querySelector('.note').innerHTML =
+      'Loaded <code>' + escapeHTML(src) + '</code> — drag to orbit, scroll to zoom around ' + escapeHTML(label) + '.';
+  });
+  mv.addEventListener('error', () => {
+    head.querySelector('.note').innerHTML =
+      'CAD model could not be loaded — the most likely cause is opening from a local file path. Serve the repo with a local web server, or check that the referenced <code>.glb/.gltf</code> asset exists.';
+  });
+}
+
+// =====================================================
+// 11. Boot
+// =====================================================
+function boot(){
+  initFiles();
+  buildTOC();
+  activeTOC();
+  setupSearch();
+  initWolframEmbeds();
+  initCAD();
+  injectCADModel();
+}
+
+// =====================================================
+// 12. Inject the inline glTF (DRACO-compressed .glb as a base64 data URI)
+//     Data URI itself lives in a separate <script id="instrument-glb-data"> tag
+//     near the top of the body so this IIFE can find it on boot.
+//     Encoded from the resolved instrument .glb when small enough to inline.
+// =====================================================
+function injectCADModel(){
+  const mv = document.querySelector('model-viewer[data-glb-uri-target="1"]');
+  if (!mv) return;
+  if (typeof window.__INSTRUMENT_GLB_DATA_URI__ === 'string' && window.__INSTRUMENT_GLB_DATA_URI__.length > 100){
+    mv.src = window.__INSTRUMENT_GLB_DATA_URI__;
+  }
+}
+
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', boot);
+} else { boot(); }
+
+})();
+</script>
+
+</body>
+</html>

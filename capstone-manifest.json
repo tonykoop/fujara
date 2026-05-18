@@ -1,0 +1,77 @@
+{
+  "title": "Fujara Studio Explorer",
+  "instrument": "fujara",
+  "build_target": "G2 fujara / A2 study baseline",
+  "artifact_focus": "Slovak overtone fipple flute with side air tube",
+  "release_status": "L2 private review; L3 analysis scaffold only",
+  "packet_version": "explorer-r2-legacy-scan",
+  "family_members": [
+    "overtone flute",
+    "fipple flute",
+    "side-tube fujara",
+    "woodwind"
+  ],
+  "hero_image": "images/00-hero-fujara.png",
+  "cultural_provenance": {
+    "claim": "The fujara is a Slovak overtone shepherd's flute from the Podpolanie region; this repository documents Tony Koop's engineering derivation and does not claim cultural ownership of the tradition.",
+    "pattern": "Parametric stave-built fujara study with SolidWorks source CAD, acoustic/capstone analysis, and deferred physical validation",
+    "public_domain_status": "Engineering files are CC-BY 4.0; cultural/music practice requires respectful attribution"
+  },
+  "physical_design_anchors": {
+    "target_fundamental": "A2 / 110 Hz capstone baseline",
+    "candidate_aspect_ratios": "45:1, 50:1, 55:1, 60:1 L:D",
+    "baseline_bore_id": "1.25 in / 31.75 mm from G2 SolidWorks references",
+    "hole_layout_rule": "three fujara holes at 68%, 73%, and 83% of long chamber length",
+    "dimension_authority": "design-table workbooks, SolidWorks files, SW reference CSVs, and capstone CSV outputs"
+  },
+  "release_gate": {
+    "public_candidate": false,
+    "required_before_public": [
+      "No physical prototype measurements are present; empirical validation remains deferred.",
+      "No print-packet.pdf, capstone-deck.pptx, or public site output is committed yet.",
+      "SolidWorks source CAD exists, but no browser-renderable GLB/glTF export is committed for model-viewer.",
+      "Open side branches add V5 packet and Wolfram starter evidence; this root explorer stays on current main until those PRs merge.",
+      "Cultural attribution should be reviewed before public promotion."
+    ]
+  },
+  "engineering": {
+    "design_tables": [
+      "design-table/fujara-dimensions-parametric.xlsx",
+      "fujara-design-table.xlsx",
+      "design-table/fujara_equations.md",
+      "sw-reference/Fujara-Master-Inputs.csv",
+      "sw-reference/Fujara-SW-Design-Table.csv"
+    ],
+    "cad_sources": [
+      "CAD/fujara-body/Fujara_Assembly.SLDASM",
+      "CAD/fujara-body/G2Fujara_Assembly.SLDDRW",
+      "CAD/fujara-body/G2Fujara_Assembly.SLDASM_dimensions.csv",
+      "CAD/labium-and-nest/"
+    ],
+    "analysis": [
+      "capstone/capstone-deck.md",
+      "capstone/REPRODUCIBILITY.md",
+      "capstone/design-table/aspect-ratio-matrix.csv",
+      "capstone/acoustic/coupled-vs-uncoupled.csv",
+      "analysis/flue-integration/README.md"
+    ],
+    "wolfram": []
+  },
+  "sources": [
+    {
+      "title": "Repository README",
+      "credit": "Tony Koop engineering narrative and cultural attribution",
+      "url": "README.md"
+    },
+    {
+      "title": "Capstone reproducibility notes",
+      "credit": "Local Python FEM and acoustic analysis scaffold",
+      "url": "capstone/REPRODUCIBILITY.md"
+    },
+    {
+      "title": "Flue integration variant study",
+      "credit": "Main-branch analysis of separate vs integrated flue construction",
+      "url": "analysis/flue-integration/README.md"
+    }
+  ]
+}

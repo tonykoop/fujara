@@ -5,6 +5,12 @@
 ![Hero photo](images/00-hero-fujara.png)
 *Early fujara body concept render: a tall overtone flute body with side air tube and three-hole voicing, captured here as a parametric CAD/design-table problem before the first physical build.*
 
+**Status:** V5 build-packet candidate for design review. The repo contains
+design-table, SolidWorks, OpenSCAD starter, vector-plate, print-packet, and
+validation artifacts, but it is **not build-ready or empirically verified**
+until the bore, flue/labium, side air tube, and tuning-response measurements in
+`validation.csv` are captured.
+
 ## What this is
 
 Engineering documentation for the **fujara** — a tall, three-hole, side-blown overtone flute originating with the shepherds of central Slovakia. The fujara is recognized by UNESCO as a Masterpiece of the Oral and Intangible Heritage of Humanity (proclaimed 2005, inscribed on the Representative List in 2008).
@@ -75,7 +81,12 @@ The table extends from **D2 (piano key 18) up to F#3 (piano key 34)** — about 
 
 ## CAD and jig design
 
-> *(Forthcoming.)*
+This repo now keeps both the original SolidWorks source set and a lightweight
+OpenSCAD starter at [`CAD/fujara.scad`](CAD/fujara.scad). The OpenSCAD file is
+a review scaffold with named parameters tied back to `family-spec.csv`,
+`sw-reference/Fujara-SW-Design-Table.csv`, and the SolidWorks dimension CSVs;
+it is not a substitute for exporting and reviewing the native CAD before shop
+use.
 
 Repository structure is laid out for:
 
@@ -135,11 +146,11 @@ fujara/
 | Repo description, license, gitignore | ✓ done |
 | Parametric design table | ✓ committed (the engineering core) |
 | Cultural attribution | ✓ done |
-| Hero photo | forthcoming |
-| CAD — body geometry | not started (requires SolidWorks access) |
-| CAD — labium and nest | not started |
-| CAD — jigs | not started |
-| Acoustic length cross-check vs. NAF | partially in design table; full writeup forthcoming |
-| Physical builds | searching personal archives |
+| Hero render / concept image | ✓ committed; concept-only |
+| CAD — body geometry | SolidWorks sources plus OpenSCAD starter committed |
+| CAD — labium and nest | SolidWorks sources present; shop review required |
+| CAD — jigs | placeholders and legacy CNC files present; not released for cutting |
+| Acoustic length cross-check vs. NAF | explicit in packet; empirical fujara measurements still required |
+| Physical builds | no measured prototype evidence committed |
 
 A repository in motion, not a finished portfolio piece.

@@ -3,8 +3,8 @@
   "instrument": "fujara",
   "build_target": "G2 fujara / A2 study baseline",
   "artifact_focus": "Slovak overtone fipple flute with side air tube",
-  "release_status": "L2 private review; L3 analysis scaffold only",
-  "packet_version": "explorer-r2-legacy-scan",
+  "release_status": "V5 build-packet candidate; not build-ready or empirically verified",
+  "packet_version": "round30-v5-candidate",
   "family_members": [
     "overtone flute",
     "fipple flute",
@@ -27,10 +27,9 @@
   "release_gate": {
     "public_candidate": false,
     "required_before_public": [
-      "No physical prototype measurements are present; empirical validation remains deferred.",
-      "No print-packet.pdf, capstone-deck.pptx, or public site output is committed yet.",
+      "No measured physical prototype evidence is committed yet.",
       "SolidWorks source CAD exists, but no browser-renderable GLB/glTF export is committed for model-viewer.",
-      "Open side branches add V5 packet and Wolfram starter evidence; this root explorer stays on current main until those PRs merge.",
+      "Flue/labium and side air-tube delivery measurements must be captured before any shop release.",
       "Cultural attribution should be reviewed before public promotion."
     ]
   },
@@ -39,6 +38,7 @@
       "design-table/fujara-dimensions-parametric.xlsx",
       "fujara-design-table.xlsx",
       "design-table/fujara_equations.md",
+      "family-spec.csv",
       "sw-reference/Fujara-Master-Inputs.csv",
       "sw-reference/Fujara-SW-Design-Table.csv"
     ],
@@ -46,7 +46,13 @@
       "CAD/fujara-body/Fujara_Assembly.SLDASM",
       "CAD/fujara-body/G2Fujara_Assembly.SLDDRW",
       "CAD/fujara-body/G2Fujara_Assembly.SLDASM_dimensions.csv",
-      "CAD/labium-and-nest/"
+      "CAD/labium-and-nest/",
+      "CAD/fujara.scad",
+      "CAD/mcp-session-log.md",
+      "drawings/fujara.svg",
+      "drawings/fujara.dxf",
+      "print-packet/assembly-plate.pdf",
+      "images/hero-render.png"
     ],
     "analysis": [
       "capstone/capstone-deck.md",
@@ -55,7 +61,23 @@
       "capstone/acoustic/coupled-vs-uncoupled.csv",
       "analysis/flue-integration/README.md"
     ],
-    "wolfram": []
+    "v5_packet": [
+      "design.md",
+      "bom.csv",
+      "sourcing.csv",
+      "cut-list.csv",
+      "validation.csv",
+      "risks.md",
+      "drawing-brief.md",
+      "photo-shotlist.md",
+      "visual-output-register.csv",
+      "build/packet/acoustic-model.md"
+    ],
+    "wolfram": [
+      "build/wolfram/side-branch-relation/README.md",
+      "build/wolfram/side-branch-relation/fujara_sidebranch_starter.wl",
+      "build/wolfram/side-branch-relation/fujara_sidebranch_study.csv"
+    ]
   },
   "sources": [
     {

@@ -1,6 +1,7 @@
 gate_id,branch,gate,required_evidence,status,next_action
-V5-001,bore_side_branch,acoustic_law_validator,family-spec.csv has explicit hypothesis and validates against validator inputs,open,Validate the acoustic-law row and keep `side_branch` branch separation in logs
-V5-002,bore_side_branch,bore_stations_measured,bore-station-plan.csv contains at least three station rows with units, tools, and capture IDs,blocked,Measure stations and add notes before any bore sketch is labeled authoritative
-V5-003,bore_side_branch,side_branch_geometry_review,side-branch offset and labium coupling are measured and tied to a plan row,blocked,Populate `bore-station-plan.csv` with side-branch junction details and response notes
-V5-004,bore_side_branch,visual_authority,visual-output-register.csv passes visual authority check with no generated/candidate visuals treated as fabrication authority,blocked,Run register review and keep visuals as concept/reference until evidence updates
-V5-005,bore_side_branch,v5_readiness,L2 label remains until gates above pass and evidence IDs are linked,open,Do not advance to L3/L4 without measurement and authority closure
+V5-001,bore_flue_side_tube,acoustic_law_validator,family-spec.csv has open_open/both_ends_open row and passes validate_acoustic_law.py,pass,Rerun after any target note or predicted length change
+V5-002,bore_flue_side_tube,bore_stations_measured,bore-station-plan.csv contains measured stations with units tools dates and capture IDs,blocked,Measure stations before any bore sketch is labeled authoritative
+V5-003,bore_flue_side_tube,flue_labium_review,flue width sound-hole length labium edge distance and nest depth are measured,blocked,Populate bore-station-plan.csv with flue/labium details and response notes
+V5-004,bore_flue_side_tube,side_tube_delivery_review,side air-tube leakage path length junction angle and pressure response are measured,blocked,Treat side tube as delivery branch until evidence proves otherwise
+V5-005,bore_flue_side_tube,visual_authority,visual-output-register.csv passes visual authority check with concept assets excluded from fabrication chain,pass,Rerun register review after adding visual artifacts
+V5-006,bore_flue_side_tube,v5_readiness,V5 candidate label remains until measurement and authority gates are linked,open,Do not advance to build-ready/validated language without measurements

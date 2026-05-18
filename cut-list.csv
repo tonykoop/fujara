@@ -1,0 +1,6 @@
+part_id,part_name,quantity,nominal_dimensions,status,authority,next_action
+CUT-001,Main bore stave set,1 set,TBD from design-table selected key,measurement_required,design-table plus CAD review,Select key and verify blank length/OD/ID before cutting
+CUT-002,Side air tube blank,1,TBD from measured mouthpiece-to-labium path,measurement_required,CAD review plus physical measurement,Measure delivery path and junction before cutting
+CUT-003,Flue plug/block,1,TBD from labium/nest geometry,measurement_required,CAD review plus response prototype,Prototype jet height and width
+CUT-004,Three-hole drilling layout,1 layout,68/73/83 percent of long chamber length,review_required,design-table rule,Verify measured chamber length before drilling
+CUT-005,Assembly/inspection plate,1,print-packet/assembly-plate.pdf,candidate,derived from design table and CAD,Use for review only until CAD/DXF shop export is checked

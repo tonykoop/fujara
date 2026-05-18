@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Fujara V5 candidate review plate</title>
+  <desc id="desc">Dimensioned schematic derived from family-spec.csv and committed design-table references; review plate only, not CAM-ready.</desc>
+  <style>
+    text { font-family: Arial, sans-serif; fill: #1f1a14; }
+    .line { stroke: #1f1a14; stroke-width: 3; fill: none; }
+    .thin { stroke: #6b5e4d; stroke-width: 1.5; fill: none; }
+    .dim { stroke: #1e3a8a; stroke-width: 1.5; marker-start: url(#arrow); marker-end: url(#arrow); }
+    .note { font-size: 18px; }
+    .small { font-size: 14px; fill: #6b5e4d; }
+    .warn { fill: #a03a2a; font-weight: bold; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e3a8a"/>
+    </marker>
+  </defs>
+  <rect x="20" y="20" width="1160" height="320" fill="#fffaf0" stroke="#e0d6c5"/>
+  <text x="40" y="55" class="note">Fujara V5 candidate review plate - open-open overtone bore, side air tube delivery branch</text>
+  <text x="40" y="82" class="small warn">Not CAM-ready. Verify against selected SolidWorks/design-table configuration and measured flue/labium data before cutting.</text>
+  <line x1="100" y1="180" x2="1040" y2="180" class="line"/>
+  <line x1="100" y1="158" x2="1040" y2="158" class="thin"/>
+  <line x1="100" y1="202" x2="1040" y2="202" class="thin"/>
+  <circle cx="879" cy="180" r="11" fill="none" stroke="#1e3a8a" stroke-width="2"/>
+  <circle cx="786" cy="180" r="11" fill="none" stroke="#1e3a8a" stroke-width="2"/>
+  <circle cx="739" cy="180" r="11" fill="none" stroke="#1e3a8a" stroke-width="2"/>
+  <line x1="100" y1="230" x2="1040" y2="230" class="dim"/>
+  <text x="430" y="258" class="small">A2 study baseline L_geom = 1550.96 mm at 20 C (validator first pass)</text>
+  <path d="M 995 122 C 1015 100, 1070 100, 1092 128 L 1092 210" class="thin"/>
+  <text x="900" y="116" class="small">side air tube: delivery branch; measure leak/path/junction</text>
+  <rect x="1015" y="147" width="48" height="12" fill="none" stroke="#a03a2a" stroke-width="2"/>
+  <text x="930" y="145" class="small">flue/labium measurement-required</text>
+  <text x="858" y="214" class="small">83%</text>
+  <text x="765" y="214" class="small">73%</text>
+  <text x="718" y="214" class="small">68%</text>
+  <text x="40" y="315" class="small">Sources: family-spec.csv, CAD/fujara.scad, sw-reference/Fujara-SW-Design-Table.csv, CAD/fujara-body/G2Fujara_Assembly.SLDASM_dimensions.csv</text>
+</svg>

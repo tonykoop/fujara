@@ -26,10 +26,3 @@ desktop.ini
 *.rst
 *.lock
 abaqus_acis.log
-
-# Python bytecode
-__pycache__/
-*.pyc
-
-# Stash-recovery sidecars
-stash-recovered-*/

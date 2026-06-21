@@ -74,9 +74,13 @@
       "build/packet/acoustic-model.md"
     ],
     "wolfram": [
-      "build/wolfram/side-branch-relation/README.md",
-      "build/wolfram/side-branch-relation/fujara_sidebranch_starter.wl",
-      "build/wolfram/side-branch-relation/fujara_sidebranch_study.csv"
+      {
+        "source_file": "woodwind/fujara/build/wolfram/side-branch-relation/fujara_sidebranch_starter.wl",
+        "cloud_path": "Musical_Instruments/woodwinds/fujara/fujara_sidebranch_starter.wl",
+        "cloud_url": "https://www.wolframcloud.com/obj/wrfcoin/Musical_Instruments/woodwinds/fujara/fujara_sidebranch_starter.wl",
+        "permission": "Public-Execute",
+        "kind": "other"
+      }
     ]
   },
   "sources": [

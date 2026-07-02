@@ -1,0 +1,42 @@
+{
+  "product": "fujara",
+  "pipeline": "studiopipeline:evolution-pipeline",
+  "stage": "0-intake",
+  "master_revision": "rev-A (pre-commit intake, 2026-07-01)",
+  "generated": "2026-07-01",
+  "cad_masters": [
+    {
+      "path": "CAD/fujara.scad",
+      "format": "openscad-source",
+      "sha256": "190f380fcafa50e0e100f06de4f9074fb25d0c7fa3dfdc7ff3e39e73c57e09af",
+      "authority": "pending_measurement",
+      "lossy": false,
+      "notes": "OpenSCAD starter with named parameters; renders clean in OpenSCAD. Review scaffold, not standalone CAM. Flue/labium/side-tube measurement-required."
+    },
+    {
+      "path": "CAD/fujara-body/Fujara_Assembly.SLDASM",
+      "format": "solidworks-assembly",
+      "sha256": "not-hashed (Windows-side native binary; out of scope this pass)",
+      "authority": "pending_measurement",
+      "lossy": false,
+      "notes": "Native SolidWorks assembly source; candidate dimension review per key/config before build."
+    },
+    {
+      "path": "build/wolfram/side-branch-relation/fujara_sidebranch_starter.wl",
+      "format": "wolfram-source",
+      "sha256": "cf987f0b9059ae579b5048b828732d24f20b733b19bd23893f207ba4642b4ca0",
+      "authority": "derived_preview",
+      "lossy": false,
+      "notes": "Side-branch relation starter; source-only (not executed). L2 evidence."
+    },
+    {
+      "path": "design-table/fujara-dimensions-parametric.xlsx",
+      "format": "design-table",
+      "sha256": "8067350d3233be8ecccbec798d0cbfb39151a577be4614266ba0883d7fdd3033",
+      "authority": "fabrication",
+      "lossy": false,
+      "notes": "Parametric workbook; candidate dimension authority. Select/review per key; measurement-gated (bore, flue/labium, side tube, tuning response)."
+    }
+  ],
+  "notes": "OpenSCAD source + parametric workbook are the current open masters; native SolidWorks assemblies exist but are not exported to neutral STEP this pass (Windows-side, out of scope). Gate A (Alpha workspace compile) not yet run."
+}

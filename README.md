@@ -5,7 +5,9 @@
 ![Hero photo](images/00-hero-fujara.png)
 *Early fujara body concept render: a tall overtone flute body with side air tube and three-hole voicing, captured here as a parametric CAD/design-table problem before the first physical build.*
 
-**Status:** V5 build-packet candidate for design review. The repo contains
+**Status:** L2 V5 build-packet candidate
+
+V5 build-packet candidate for design review. The repo contains
 design-table, SolidWorks, OpenSCAD starter, vector-plate, print-packet, and
 validation artifacts, but it is **not build-ready or empirically verified**
 until the bore, flue/labium, side air tube, and tuning-response measurements in
@@ -152,5 +154,6 @@ fujara/
 | CAD — jigs | placeholders and legacy CNC files present; not released for cutting |
 | Acoustic length cross-check vs. NAF | explicit in packet; empirical fujara measurements still required |
 | Physical builds | no measured prototype evidence committed |
+| Evolution-pipeline intake | Stage 0 intake added under `evolution/` (manifest, design-intent, revisions); Gate A not yet run |
 
 A repository in motion, not a finished portfolio piece.

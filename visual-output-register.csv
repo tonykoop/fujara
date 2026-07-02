@@ -9,3 +9,4 @@ SVG-001,drawings/fujara.svg,svg_preview,derived_preview,derived_preview,DXF-001,
 PDF-001,print-packet/assembly-plate.pdf,drawing_pdf,dimensioned_drawing,fabrication,DXF-001,derived_from_authority,Annotated assembly review plate
 IMG-001,images/00-hero-fujara.png,render_preview,concept,concept_only,,none,Concept hero render only; no dimensional authority
 IMG-002,images/hero-render.png,render_preview,concept,concept_only,IMG-001,none,Issue #5 expected hero-render path; copied from existing concept hero and not dimensional authority
+WL-001,build/wolfram/side-branch-relation/fujara_sidebranch_starter.wl,wolfram_source,analysis_source,derived_preview,DST-001,source_only,Wolfram side-branch relation starter; source-only (not executed). L2 evidence — no fabrication authority.
